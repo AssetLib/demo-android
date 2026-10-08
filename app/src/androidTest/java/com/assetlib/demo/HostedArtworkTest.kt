@@ -1,5 +1,6 @@
 package com.assetlib.demo
 
+import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.assetlib.sdk.*
@@ -24,7 +25,12 @@ class HostedArtworkTest {
         for(ref in listOf(AppAssets.Travel.coast,AppAssets.Travel.ridge,AppAssets.Tasks.garden)) {
             val resolved=live.resolve(ref)
             assertNotEquals(AssetSource.BUNDLE,resolved.source)
+            assertEquals("A historical fallback must not count as the current release",refreshed.sequence,resolved.sequence)
+            assertTrue(resolved.mime in listOf("image/png","image/webp"))
             val bitmap=AndroidAssets.bitmap(resolved)!!
+            assertEquals(resolved.pixelWidth,bitmap.width)
+            assertEquals(resolved.pixelHeight,bitmap.height)
+            Log.i("AssetlibHostedSmoke","${ref.key}: sequence=${resolved.sequence}, mime=${resolved.mime}, pixels=${bitmap.width}x${bitmap.height}, sha256=${resolved.sha256}")
             assertTrue(bitmap.width > 0 && bitmap.height > 0); bitmap.recycle()
         }
         // Same default Android namespace, independent client with networking explicitly disabled.
@@ -34,6 +40,7 @@ class HostedArtworkTest {
         assertNotNull(offline.refresh().error)
         val cached=offline.resolve(AppAssets.Travel.coast)
         assertEquals(AssetSource.CACHE,cached.source)
+        assertEquals(refreshed.sequence,cached.sequence)
         val bitmap=AndroidAssets.bitmap(cached)!!
         assertTrue(bitmap.width > 0); bitmap.recycle()
         // Retain verified state; never remove an existing app namespace's replay protection.
