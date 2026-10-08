@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-data class Artwork(val bitmap: Bitmap? = null, val source: AssetSource = AssetSource.BUNDLE, val sequence: Long? = null)
+data class Artwork(val bitmap: Bitmap? = null, val source: AssetSource = AssetSource.BUNDLE, val sequence: Long? = null, val mime: String? = null, val pixelWidth: Int? = null, val pixelHeight: Int? = null)
 data class TravelState(val connected: Boolean = false, val busy: Boolean = false, val sequence: Long = 0, val message: String = "Explore with the artwork bundled in this app.", val error: String? = null, val coast: Artwork = Artwork(), val ridge: Artwork = Artwork(), val garden: Artwork = Artwork())
 
 class TravelModel(application: Application) : AndroidViewModel(application) {
@@ -26,6 +26,8 @@ class TravelModel(application: Application) : AndroidViewModel(application) {
     private var operation: Job? = null
     @Volatile private var generation = 0
     private val configGuard = Any()
+    private val targets = mutableMapOf<AssetRef,AssetPixelSize>()
+    private var demandRevision = 0
     init {
         operation=viewModelScope.launch {
             val saved=withContext(Dispatchers.IO) { runCatching { configFile.readFully().toString(Charsets.UTF_8) }.getOrNull() }
@@ -69,17 +71,37 @@ class TravelModel(application: Application) : AndroidViewModel(application) {
             val result=current.refresh(); loadArtwork(current,token,result.error)
         }
     }
+    /** Compose reports measured pixels here, including display density. Layout modifiers alone do not tell the SDK. */
+    fun setTarget(reference: AssetRef, pixels: AssetPixelSize) {
+        if(targets[reference] == pixels) return
+        targets[reference] = pixels; demandRevision++
+        val current = client ?: return
+        if(mutable.value.busy) return
+        val token = generation
+        operation = viewModelScope.launch {
+            mutable.value = mutable.value.copy(busy=true)
+            loadArtwork(current,token)
+        }
+    }
     private suspend fun loadArtwork(c: AssetClient,token: Int,error: String? = null) {
-        suspend fun image(ref: AssetRef): Artwork { val a=c.resolve(ref); return Artwork(AndroidAssets.bitmap(a),a.source,a.sequence) }
-        val coast=image(AppAssets.Travel.coast)
-        if(token != generation) return
-        mutable.value=mutable.value.copy(coast=coast,sequence=c.status.value.sequence)
-        val ridge=image(AppAssets.Travel.ridge)
-        if(token != generation) return
-        mutable.value=mutable.value.copy(ridge=ridge)
-        val garden=image(AppAssets.Tasks.garden)
-        if(token != generation) return
-        mutable.value=mutable.value.copy(connected=true,busy=false,garden=garden,message="Your app keeps its layout. Artwork follows the published release.",error=error ?: c.status.value.lastError)
+        suspend fun image(ref: AssetRef): Artwork {
+            val a=c.resolve(ref,targets[ref] ?: AssetPixelSize(ref.width,ref.height))
+            val bitmap=AndroidAssets.bitmap(a) ?: return Artwork()
+            return Artwork(bitmap,a.source,a.sequence,a.mime,a.pixelWidth,a.pixelHeight)
+        }
+        do {
+            val requestedRevision = demandRevision
+            val coast=image(AppAssets.Travel.coast)
+            if(token != generation) return
+            mutable.value=mutable.value.copy(coast=coast,sequence=c.status.value.sequence)
+            val ridge=image(AppAssets.Travel.ridge)
+            if(token != generation) return
+            mutable.value=mutable.value.copy(ridge=ridge)
+            val garden=image(AppAssets.Tasks.garden)
+            if(token != generation) return
+            mutable.value=mutable.value.copy(connected=true,garden=garden,message="Renditions follow the measured image size in pixels. Your app keeps its layout.",error=error ?: c.status.value.lastError)
+        } while(requestedRevision != demandRevision)
+        mutable.value=mutable.value.copy(busy=false)
     }
     fun disconnect() {
         operation?.cancel(); ++generation; client=null
