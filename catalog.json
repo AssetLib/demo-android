@@ -8,7 +8,13 @@
         "coast"
       ],
       "width": 1200,
-      "height": 900
+      "height": 900,
+      "bundledAccessibility": {
+        "defaultLocale": "en",
+        "descriptions": {
+          "en": "A coastal landscape with blue water and cliffs"
+        }
+      }
     },
     {
       "key": "travel.ridge",
@@ -17,7 +23,13 @@
         "ridge"
       ],
       "width": 1200,
-      "height": 900
+      "height": 900,
+      "bundledAccessibility": {
+        "defaultLocale": "en",
+        "descriptions": {
+          "en": "An alpine landscape with mountains and a lake"
+        }
+      }
     },
     {
       "key": "tasks.garden",
@@ -26,7 +38,13 @@
         "garden"
       ],
       "width": 600,
-      "height": 400
+      "height": 400,
+      "bundledAccessibility": {
+        "defaultLocale": "en",
+        "descriptions": {
+          "en": "A small garden of green plants"
+        }
+      }
     }
   ]
 }

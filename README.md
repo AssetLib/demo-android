@@ -4,7 +4,7 @@ A small Jetpack Compose travel app using the native [Assetlib Android SDK](https
 
 [Assetlib console](https://assetlib-console.vercel.app) · [Product site](https://assetlib-sable.vercel.app) · [Public web travel demo](https://assetlib-travel.vercel.app)
 
-Android API 26+; the current source targets developer preview **0.2.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
+Android API 26+; the current source targets developer preview **0.2.1-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
 
 ## Build from this checkout
 
@@ -15,7 +15,7 @@ Install JDK 17, Android SDK 36 / build-tools 36.1.0, and Node 22+. Set `ANDROID_
 ./gradlew :app:installDebug
 ```
 
-The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.2.0-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
+The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.2.1-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
 
 For SDK development only:
 
@@ -47,6 +47,8 @@ The local override intentionally bypasses the release AAR. It is not the default
 
 The third placement appears in the weekend-ritual card. Image views remain normal Compose `Image` calls with a demo-local `BitmapPainter` adapter over the SDK's verified Android `Bitmap`. This adds no Compose dependency to the SDK and no native SVG renderer. The SDK validates SVG candidate metadata but selects prepared PNG/WebP rasters.
 
+The destination illustrations use optional localized descriptions from the same resolved release as their displayed bitmap. Bundled fallback descriptions are declared separately in `catalog.json`; a missing bitmap uses only its bundled description. An undescribed remote image is decorative beside the existing destination title, never labeled with a stale bundled description. The small weekend-ritual illustration is explicitly decorative. Destination text and Save actions remain app-owned. Description selection follows the app configuration's current language, and bitmap/metadata changes are stored together.
+
 Logical dimensions define compatibility, not exact delivered pixel size. The demo forwards each image's Compose `onSizeChanged` result as `AssetPixelSize`: these are actual display pixels, including density, not dp. The SDK chooses a sufficiently large rendition or the largest available alternative, then legacy WebP. A size change resolves again against the accepted release. The displayed format and dimensions describe the selected decoded image, not its original upload format. Outside the demo, callers must pass their own target size; Compose modifiers do not automatically reach the SDK.
 
 `catalog.json` and generated `AppAssets.kt` are committed. Regenerate without network access:
@@ -62,7 +64,11 @@ This preview does not scan source usage, upload source code, contain analytics, 
 
 ```sh
 ./gradlew :app:testDebugUnitTest :app:lint :app:assembleDebug :app:assembleRelease
+# With an Android API 26+ emulator/device:
+./gradlew :app:connectedDebugAndroidTest
 ```
+
+An automated Compose test inspects the native accessibility tree for described artwork, decorative imagery, app-owned actions, fallback descriptions after missing pixels, and removal of a description when remote metadata is absent. This is separate from manual TalkBack acceptance.
 
 The release build enables R8 and resource shrinking. It produces an unsigned release APK; publishing a signed store build needs your own signing process. Never commit a keystore or credentials. CI runs the generated-reference check, lint, tests and debug/release assembly. See the SDK repository for signed-protocol, concurrency, cache and native decoder tests.
 
@@ -79,3 +85,5 @@ The file is copied only to ignored build output for the **test APK**, never to t
 The 0.2 preview was validated with a clean default build using the public, hash-locked AAR (no sibling override): unit checks, lint, debug/release assembly, and a read-only hosted emulator test resolving all three placements and an independent offline restart passed. The SDK's separate tests cover 65 signed manifest cases and four native decoder scenarios, including PNG rendition sizes and malformed PNG fallback. This is emulator evidence, not validation on every device or a native SVG-rendering claim.
 
 On October 7, 2026, the public AAR also passed against a hosted release containing an SVG-backed coast placement with prepared renditions. Android selected and fully decoded its 2048 × 1536 WebP; the two legacy placements decoded at 1200 × 900 and 600 × 400. All three resolved the newly accepted sequence 4, and a separate client with networking disabled restored that sequence and the cached coast image. The test asserts the resolved sequence equals the accepted sequence so historical fallback cannot count as current-release success. This was a read-only SDK/emulator check, not a native UI publication test; hosted release numbers change as new releases are published.
+
+On October 8, 2026, the 0.2.1-preview.1 update passed a default build against the public AAR with SHA-256 `60a8ebe267f7aab6ef72e35546c97270008cdd7674dd17cc975f3395c85539c7`, without a sibling SDK override. Both JVM tests, generated-reference checks, lint, and debug/release assembly passed. The API 36.1 emulator Compose accessibility-tree test passed; the optional hosted test skipped because no public configuration was supplied. The checks verified descriptions follow actual displayed pixels, decoration is omitted, fallback does not retain remote labels, and app-owned actions stay available. Manual TalkBack, physical-device acceptance, and a new hosted release check were not performed.

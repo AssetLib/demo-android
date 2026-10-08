@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.assetlib.sdk.AssetSource
 import com.assetlib.sdk.AssetPixelSize
+import com.assetlib.sdk.AssetRef
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,12 +62,12 @@ class MainActivity : ComponentActivity() {
                 Text(if(savedOnly) "Keep a place\nin mind." else "Somewhere\nworth slowing down.",fontFamily=FontFamily.Serif,fontSize=38.sp,lineHeight=41.sp)
                 Text(if(savedOnly) "The places you’ve saved for another day." else "A coastal morning. A mountain path. Leave a little room for both.",color=Color(0xff626b60),lineHeight=22.sp)
             }
-            if(!savedOnly||savedCoast) DestinationCard("A coastal weekend","Quiet coves · two unhurried days",state.coast,R.drawable.coast_hero,savedCoast,{model.setTarget(AppAssets.Travel.coast,it)}) { savedCoast=!savedCoast }
-            if(!savedOnly||savedRidge) DestinationCard("An alpine escape","Fresh air · a different point of view",state.ridge,R.drawable.ridge_card,savedRidge,{model.setTarget(AppAssets.Travel.ridge,it)}) { savedRidge=!savedRidge }
+            if(!savedOnly||savedCoast) DestinationCard("A coastal weekend","Quiet coves · two unhurried days",state.coast,AppAssets.Travel.coast,R.drawable.coast_hero,savedCoast,{model.setTarget(AppAssets.Travel.coast,it)}) { savedCoast=!savedCoast }
+            if(!savedOnly||savedRidge) DestinationCard("An alpine escape","Fresh air · a different point of view",state.ridge,AppAssets.Travel.ridge,R.drawable.ridge_card,savedRidge,{model.setTarget(AppAssets.Travel.ridge,it)}) { savedRidge=!savedRidge }
             if(savedOnly&&!savedCoast&&!savedRidge) OutlinedCard(Modifier.fillMaxWidth()) { Column(Modifier.padding(24.dp)) { Text("Your list starts with a place.",fontWeight=FontWeight.SemiBold); Text("Tap Save on a destination to keep it here.",Modifier.padding(top=8.dp)); TextButton(onClick={savedOnly=false}) {Text("Explore places") } } }
             if(!savedOnly) Card(colors=CardDefaults.cardColors(containerColor=Color(0xffe8ebdf))) {
                 Row(Modifier.padding(16.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(16.dp)) {
-                    ArtworkImage(state.garden,R.drawable.task_garden,"A plant illustration for your weekend ritual",Modifier.width(100.dp).aspectRatio(1.5f).clip(RoundedCornerShape(16.dp))) {model.setTarget(AppAssets.Tasks.garden,it)}
+                    ArtworkImage(state.garden,AppAssets.Tasks.garden,R.drawable.task_garden,Modifier.width(100.dp).aspectRatio(1.5f).clip(RoundedCornerShape(16.dp)),decorative=true) {model.setTarget(AppAssets.Tasks.garden,it)}
                     Column { Text("Make space for small things.",fontFamily=FontFamily.Serif,fontSize=21.sp); Text("One walk. One quiet morning.",fontSize=13.sp,modifier=Modifier.padding(top=6.dp)); SourceLabel(state.garden) }
                 }
             }
@@ -87,17 +89,21 @@ class MainActivity : ComponentActivity() {
     if(connection) ConnectionSheet(state,model,onClose={connection=false})
 }
 
-@Composable private fun DestinationCard(title: String,subtitle: String,art: Artwork,fallback: Int,saved: Boolean,onPixelSize: (AssetPixelSize) -> Unit,onSave: () -> Unit) {
+@Composable private fun DestinationCard(title: String,subtitle: String,art: Artwork,reference: AssetRef,fallback: Int,saved: Boolean,onPixelSize: (AssetPixelSize) -> Unit,onSave: () -> Unit) {
     Column(verticalArrangement=Arrangement.spacedBy(10.dp)) {
-        ArtworkImage(art,fallback,title,Modifier.fillMaxWidth().aspectRatio(4f/3f).clip(RoundedCornerShape(24.dp)),onPixelSize)
+        ArtworkImage(art,reference,fallback,Modifier.fillMaxWidth().aspectRatio(4f/3f).clip(RoundedCornerShape(24.dp)),onPixelSize=onPixelSize)
         Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) { Text(title,fontFamily=FontFamily.Serif,fontSize=25.sp); Text(subtitle,fontSize=13.sp,color=Color(0xff626b60),modifier=Modifier.padding(top=4.dp)); SourceLabel(art) }
             OutlinedButton(onClick=onSave,contentPadding=PaddingValues(horizontal=14.dp)) { Text(if(saved) "Saved ♥" else "Save ♡") }
         }
     }
 }
-@Composable private fun ArtworkImage(art: Artwork,fallback: Int,description: String,modifier: Modifier,onPixelSize: (AssetPixelSize) -> Unit) {
+@Composable internal fun ArtworkImage(art: Artwork,reference: AssetRef,fallback: Int,modifier: Modifier,decorative: Boolean = false,onPixelSize: (AssetPixelSize) -> Unit) {
     val painter = rememberAssetArtworkPainter(art.bitmap,fallback)
+    val languageTag = LocalConfiguration.current.locales[0].toLanguageTag()
+    // The painter uses bundled pixels exactly when the verified bitmap is absent.
+    val metadata = if(art.bitmap == null) reference.bundledAccessibility else art.accessibility
+    val description = if(decorative) null else metadata?.localizedDescription(languageTag)
     Image(painter=painter,contentDescription=description,modifier=modifier.onSizeChanged {
         if(it.width > 0 && it.height > 0) onPixelSize(AssetPixelSize(it.width.coerceAtMost(8192),it.height.coerceAtMost(8192)))
     },contentScale=ContentScale.Crop)
