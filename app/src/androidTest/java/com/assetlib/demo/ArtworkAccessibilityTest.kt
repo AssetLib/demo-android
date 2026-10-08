@@ -65,12 +65,12 @@ class ArtworkAccessibilityTest {
                 tree = awaitTree { nodes -> nodes.any { it.isClickable && this.nodes(it).any { child -> child.text?.toString() == "Save destination" } } }
                 // A later decode failure uses bundled pixels even if stale remote metadata exists.
                 scenario.onActivity { artwork.value = Artwork(source = AssetSource.REMOTE, accessibility = metadata) }
-                tree = awaitTree { nodes -> nodes.any { it.contentDescription?.toString() == "A coastal landscape with blue water and cliffs" } }
+                tree = awaitTree { nodes -> nodes.any { it.contentDescription?.toString() == "An illustrated seaside house with trees and a sailboat" } }
                 assertFalse(tree.any { it.contentDescription?.toString() == "Published mountain landscape" })
                 // The app treats undescribed imagery as decorative alongside its persistent title.
                 scenario.onActivity { artwork.value = Artwork(bitmap, AssetSource.REMOTE) }
                 tree = awaitTree { nodes -> nodes.any { it.text?.toString() == "A coastal weekend" } && nodes.none { it.className.toString() == "android.widget.ImageView" } }
-                assertFalse(tree.any { it.contentDescription?.toString() == "A coastal landscape with blue water and cliffs" })
+                assertFalse(tree.any { it.contentDescription?.toString() == "An illustrated seaside house with trees and a sailboat" })
             }
         } finally { bitmap.recycle() }
     }

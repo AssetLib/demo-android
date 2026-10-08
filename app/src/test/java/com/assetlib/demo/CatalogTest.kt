@@ -13,7 +13,7 @@ class CatalogTest {
         assertEquals(900,AppAssets.Travel.ridge.height)
         assertEquals(600,AppAssets.Tasks.garden.width)
         assertEquals(400,AppAssets.Tasks.garden.height)
-        assertEquals("A coastal landscape with blue water and cliffs",AppAssets.Travel.coast.bundledAccessibility?.localizedDescription("en-US"))
+        assertEquals("An illustrated seaside house with trees and a sailboat",AppAssets.Travel.coast.bundledAccessibility?.localizedDescription("en-US"))
     }
     @Test fun emptyAndInvalidConnectionStayRejected() {
         for(input in listOf("","{}","null","[]","{\"manifestUrl\":\"https://example.com/api/auth\"}")) {

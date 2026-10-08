@@ -12,7 +12,7 @@
       "bundledAccessibility": {
         "defaultLocale": "en",
         "descriptions": {
-          "en": "A coastal landscape with blue water and cliffs"
+          "en": "An illustrated seaside house with trees and a sailboat"
         }
       }
     },
@@ -27,7 +27,7 @@
       "bundledAccessibility": {
         "defaultLocale": "en",
         "descriptions": {
-          "en": "An alpine landscape with mountains and a lake"
+          "en": "An illustrated mountain cabin beside a winding path"
         }
       }
     },
@@ -42,7 +42,7 @@
       "bundledAccessibility": {
         "defaultLocale": "en",
         "descriptions": {
-          "en": "A small garden of green plants"
+          "en": "A leafy plant in a yellow pot"
         }
       }
     }

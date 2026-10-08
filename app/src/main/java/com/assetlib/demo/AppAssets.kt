@@ -6,10 +6,10 @@ import com.assetlib.sdk.AssetAccessibility
 
 object AppAssets {
     object Tasks {
-        val garden = AssetRef("tasks.garden", 600, 400, bundledAccessibility = AssetAccessibility("en", mapOf("en" to "A small garden of green plants")))
+        val garden = AssetRef("tasks.garden", 600, 400, bundledAccessibility = AssetAccessibility("en", mapOf("en" to "A leafy plant in a yellow pot")))
     }
     object Travel {
-        val coast = AssetRef("travel.coast", 1200, 900, bundledAccessibility = AssetAccessibility("en", mapOf("en" to "A coastal landscape with blue water and cliffs")))
-        val ridge = AssetRef("travel.ridge", 1200, 900, bundledAccessibility = AssetAccessibility("en", mapOf("en" to "An alpine landscape with mountains and a lake")))
+        val coast = AssetRef("travel.coast", 1200, 900, bundledAccessibility = AssetAccessibility("en", mapOf("en" to "An illustrated seaside house with trees and a sailboat")))
+        val ridge = AssetRef("travel.ridge", 1200, 900, bundledAccessibility = AssetAccessibility("en", mapOf("en" to "An illustrated mountain cabin beside a winding path")))
     }
 }
