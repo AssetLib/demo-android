@@ -124,7 +124,7 @@ class MainActivity : ComponentActivity() {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal=24.dp).padding(bottom=32.dp).imePadding(),verticalArrangement=Arrangement.spacedBy(14.dp)) {
             Text("Connect your artwork.",fontFamily=FontFamily.Serif,fontSize=30.sp)
             Text("Create a demo workspace in the console. Copy its public SDK configuration, then paste it here. No admin key or password belongs in this field.",fontSize=14.sp,lineHeight=21.sp)
-            TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse("https://assetlib-console.vercel.app")))}) { Text("Open Assetlib console ↗") }
+            TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse("https://console.assetlib.dev")))}) { Text("Open Assetlib console ↗") }
             OutlinedTextField(value=text,onValueChange={tooLong=it.length>8192; if(!tooLong) text=it},label={Text("Public SDK configuration")},placeholder={Text("Paste the complete JSON configuration")},minLines=4,maxLines=7,modifier=Modifier.fillMaxWidth(),enabled=!state.busy,isError=tooLong)
             if(tooLong) Text("Configuration is too long. Use the public JSON from the console.",color=MaterialTheme.colorScheme.error)
             state.error?.let {Text(it,color=MaterialTheme.colorScheme.error,fontSize=13.sp)}

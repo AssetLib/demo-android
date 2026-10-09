@@ -2,7 +2,7 @@
 
 A small Jetpack Compose travel app using the native [Assetlib Android SDK](https://github.com/AssetLib/sdk-android). Browse coastal and alpine weekends with bundled original artwork, save a destination, then connect your own workspace to change artwork without rebuilding a compatible app.
 
-[Assetlib console](https://assetlib-console.vercel.app) · [Product site](https://assetlib-sable.vercel.app) · [Public web travel demo](https://assetlib-travel.vercel.app)
+[Assetlib console](https://console.assetlib.dev) · [Product site](https://www.assetlib.dev) · [Public web travel demo](https://assetlib-travel.vercel.app)
 
 Android API 26+; the current source targets developer preview **0.3.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
 
