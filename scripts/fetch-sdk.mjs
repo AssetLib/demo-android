@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, renameSync, rmSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 const release=JSON.parse(readFileSync(new URL('../sdk-release.json',import.meta.url)));
-if(release.version!=='0.2.1-preview.1'||!/^https:\/\/github\.com\/AssetLib\/sdk-android\/releases\/download\/v0\.2\.1-preview\.1\/assetlib-android-0\.2\.1-preview\.1\.aar$/.test(release.url)||!/^[a-f0-9]{64}$/.test(release.sha256)) throw Error('Invalid release lock.');
-const file=new URL('../app/libs/assetlib-android-0.2.1-preview.1.aar',import.meta.url);
+if(release.version!=='0.3.0-preview.1'||!/^https:\/\/github\.com\/AssetLib\/sdk-android\/releases\/download\/v0\.3\.0-preview\.1\/assetlib-android-0\.3\.0-preview\.1\.aar$/.test(release.url)||!/^[a-f0-9]{64}$/.test(release.sha256)) throw Error('Invalid release lock.');
+const file=new URL('../app/libs/assetlib-android-0.3.0-preview.1.aar',import.meta.url);
 const valid=b=>b.byteLength<=10*1024*1024&&createHash('sha256').update(b).digest('hex')===release.sha256;
 if(existsSync(file)) { if(!valid(readFileSync(file))) throw Error('Existing SDK AAR hash mismatch. Remove the file and retry.'); }
 else {

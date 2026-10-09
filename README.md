@@ -4,7 +4,7 @@ A small Jetpack Compose travel app using the native [Assetlib Android SDK](https
 
 [Assetlib console](https://assetlib-console.vercel.app) · [Product site](https://assetlib-sable.vercel.app) · [Public web travel demo](https://assetlib-travel.vercel.app)
 
-Android API 26+; the current source targets developer preview **0.2.1-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
+Android API 26+; the current source targets developer preview **0.3.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
 
 ## Build from this checkout
 
@@ -15,7 +15,7 @@ Install JDK 17, Android SDK 36 / build-tools 36.1.0, and Node 22+. Set `ANDROID_
 ./gradlew :app:installDebug
 ```
 
-The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.2.1-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
+The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.3.0-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
 
 For SDK development only:
 
