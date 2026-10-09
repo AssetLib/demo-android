@@ -8,7 +8,13 @@
         "coast"
       ],
       "width": 1200,
-      "height": 900
+      "height": 900,
+      "bundledAccessibility": {
+        "defaultLocale": "en",
+        "descriptions": {
+          "en": "An illustrated seaside house with trees and a sailboat"
+        }
+      }
     },
     {
       "key": "travel.ridge",
@@ -17,7 +23,13 @@
         "ridge"
       ],
       "width": 1200,
-      "height": 900
+      "height": 900,
+      "bundledAccessibility": {
+        "defaultLocale": "en",
+        "descriptions": {
+          "en": "An illustrated mountain cabin beside a winding path"
+        }
+      }
     },
     {
       "key": "tasks.garden",
@@ -26,7 +38,13 @@
         "garden"
       ],
       "width": 600,
-      "height": 400
+      "height": 400,
+      "bundledAccessibility": {
+        "defaultLocale": "en",
+        "descriptions": {
+          "en": "A leafy plant in a yellow pot"
+        }
+      }
     }
   ]
 }

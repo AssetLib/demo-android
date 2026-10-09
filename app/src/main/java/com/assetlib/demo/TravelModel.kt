@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-data class Artwork(val bitmap: Bitmap? = null, val source: AssetSource = AssetSource.BUNDLE, val sequence: Long? = null, val mime: String? = null, val pixelWidth: Int? = null, val pixelHeight: Int? = null)
+data class Artwork(val bitmap: Bitmap? = null, val source: AssetSource = AssetSource.BUNDLE, val sequence: Long? = null, val mime: String? = null, val pixelWidth: Int? = null, val pixelHeight: Int? = null, val accessibility: AssetAccessibility? = null)
 data class TravelState(val connected: Boolean = false, val busy: Boolean = false, val sequence: Long = 0, val message: String = "Explore with the artwork bundled in this app.", val error: String? = null, val coast: Artwork = Artwork(), val ridge: Artwork = Artwork(), val garden: Artwork = Artwork())
 
 class TravelModel(application: Application) : AndroidViewModel(application) {
@@ -87,7 +87,7 @@ class TravelModel(application: Application) : AndroidViewModel(application) {
         suspend fun image(ref: AssetRef): Artwork {
             val a=c.resolve(ref,targets[ref] ?: AssetPixelSize(ref.width,ref.height))
             val bitmap=AndroidAssets.bitmap(a) ?: return Artwork()
-            return Artwork(bitmap,a.source,a.sequence,a.mime,a.pixelWidth,a.pixelHeight)
+            return Artwork(bitmap,a.source,a.sequence,a.mime,a.pixelWidth,a.pixelHeight,a.accessibility)
         }
         do {
             val requestedRevision = demandRevision
