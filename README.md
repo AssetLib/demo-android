@@ -4,7 +4,7 @@ A small Jetpack Compose travel app using the native [Assetlib Android SDK](https
 
 [Assetlib console](https://console.assetlib.dev) · [Product site](https://www.assetlib.dev) · [Public web travel demo](https://assetlib-travel.vercel.app)
 
-Android API 26+; the current source targets developer preview **0.3.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
+Android API 26+; the current source targets developer preview **0.4.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
 
 ## Build from this checkout
 
@@ -15,7 +15,7 @@ Install JDK 17, Android SDK 36 / build-tools 36.1.0, and Node 22+. Set `ANDROID_
 ./gradlew :app:installDebug
 ```
 
-The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.3.0-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
+The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.4.0-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
 
 For SDK development only:
 
@@ -88,4 +88,4 @@ On October 7, 2026, the public AAR also passed against a hosted release containi
 
 On October 8, 2026, the 0.2.1-preview.1 update passed a default build against the public AAR with SHA-256 `60a8ebe267f7aab6ef72e35546c97270008cdd7674dd17cc975f3395c85539c7`, without a sibling SDK override. Both JVM tests, generated-reference checks, lint, and debug/release assembly passed. The API 36.1 emulator Compose accessibility-tree test passed; the optional hosted test skipped because no public configuration was supplied. The checks verified descriptions follow actual displayed pixels, decoration is omitted, fallback does not retain remote labels, and app-owned actions stay available. Manual TalkBack, physical-device acceptance, and a new hosted release check were not performed.
 
-The October 9, 2026 update to 0.3.0-preview.1 is recorded in [VERIFICATION.md](VERIFICATION.md).
+The October 9, 2026 update to 0.3.0-preview.1 and the October 10, 2026 update to 0.4.0-preview.1 are recorded in [VERIFICATION.md](VERIFICATION.md).

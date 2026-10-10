@@ -3,7 +3,7 @@ android {
     namespace = "com.assetlib.demo"
     compileSdk = 36
     buildToolsVersion = "36.1.0"
-    defaultConfig { applicationId = "com.assetlib.demo.travel"; minSdk = 26; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"; targetSdk = 36; versionCode = 4; versionName = "0.3.0-preview.1" }
+    defaultConfig { applicationId = "com.assetlib.demo.travel"; minSdk = 26; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"; targetSdk = 36; versionCode = 5; versionName = "0.4.0-preview.1" }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
@@ -19,7 +19,7 @@ val fetchSdk by tasks.registering(Exec::class) {
 }
 dependencies {
     if(findProject(":assetlib-sdk") != null) implementation(project(":assetlib-sdk"))
-    else implementation(files("libs/assetlib-android-0.3.0-preview.1.aar").builtBy(fetchSdk))
+    else implementation(files("libs/assetlib-android-0.4.0-preview.1.aar").builtBy(fetchSdk))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("org.bouncycastle:bcprov-jdk18on:1.86")
