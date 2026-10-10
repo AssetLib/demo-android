@@ -34,3 +34,20 @@ Observed locally with JDK 17 (Zulu 17.54.21), Node 24, Android SDK 36 and build-
 - The debug APK was installed and launched. The connection sheet rendered, and **Open Assetlib console** started a `VIEW` intent for `https://console.assetlib.dev`.
 
 Not verified: manual TalkBack, a physical device, Android 8 (API 26), and a console publish and rollback while the app is open.
+
+## Local-console end-to-end run — October 9, 2026 (America/New_York)
+
+The workspace's `e2e/` harness (`node e2e/run.mjs`, harness commit `ee93fb8`) ran the golden path against the local console at `http://127.0.0.1:3100` on the API 36.1 emulator (Android 16, Google Play image, headless), from 20:06 to 20:10 ET (run `20261010T000638Z`). The debug APK was built from `dae4328` (SHA-256 `c0d3ecfecb5f1d2f3a087fc0639d271288c6905a3271c8573e195c427977ec4a`). Maestro 2.11.0 drove the UI; each result below was read by the harness from the UI hierarchy and a screenshot. The report is `e2e/output/20261010T000638Z/report.html` in the workspace (local, not committed).
+
+`dae4328` made this possible: the SDK accepts only HTTPS, the local console serves HTTP, and the debug build trusted only system CAs. The debug source set now has a network security config whose `debug-overrides` trust user CAs; the harness fronts the console with HTTPS on `127.0.0.1:3443` (reached through `adb reverse`) and installs its local test CA once as a user credential through Settings. Cleartext stays off. The release APK has no network security config (checked with `aapt2 dump xmltree`), and `:app:testDebugUnitTest :app:lint :app:assembleDebug :app:assembleRelease` passed with JDK 17.
+
+Observed on the emulator:
+
+- `assetlib sync` registered an Android build (`0.3.0-preview.1`, build 4) from a temporary copy of `catalog.json` with a screen per placement (`travel.coast` on `ExploreScreen`); the committed catalog is unchanged.
+- In the connection sheet, the pasted public configuration (the console's own, with the manifest URL on the HTTPS front) verified signed release 28, and the coast card showed "Downloaded & verified · r28".
+- A new 1200 × 900 image was bound to `travel.coast` and published. **Check for updates** showed "Downloaded & verified · r29", and the replacement's colour covered 48% of the coast image band in the screenshot.
+- Production was rolled back to publication 28 as publication 30. **Check for updates** showed "Verified cache · r30" (the restored bytes were already cached) with the original coast artwork and none of the replacement colour.
+- With Wi-Fi and mobile data off (`svc`), the `adb reverse` mapping removed and the HTTPS front stopped, a force-stop and relaunch showed "Verified cache · r30" with the restored artwork. Networking was turned back on and checked.
+- Observations: none. SDK `0.3.0-preview.1` sends no observations, and the console reported zero counts for this build.
+
+Not established: a physical device, Android 8 (API 26), TalkBack, or this loop against the hosted console. An emulator run is not a device run.
