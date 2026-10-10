@@ -1,6 +1,6 @@
 # Verification — October 7, 2026 (America/New_York)
 
-The current default dependency is the public GitHub release `AssetLib/sdk-android@v0.3.0-preview.1`, verified against committed SHA-256 `a80744898801350032b71aa9241a7aba8344f333ef3360f22310d08c59ab2d20`; its checks are in the October 9 section at the end. The record below covers the first release, whose default dependency was `AssetLib/sdk-android@v0.1.0-preview.1`, verified against SHA-256 `adb0f4fdc5ceaa69c2092e3987ebc17afc0fb5f34bbf7576eea025147445eba2`. The 0.2.x checks are dated in the README under "Checks and distribution".
+The current default dependency is the public GitHub release `AssetLib/sdk-android@v0.4.0-preview.1`, verified against committed SHA-256 `03d55eaa1975fe86494fb2f65e69e0ad7ad3f5a60d492f02d3c06bf3bdc9a98a`; its checks are in the October 10 section at the end. The October 9 sections cover `v0.3.0-preview.1`. The record below covers the first release, whose default dependency was `AssetLib/sdk-android@v0.1.0-preview.1`, verified against SHA-256 `adb0f4fdc5ceaa69c2092e3987ebc17afc0fb5f34bbf7576eea025147445eba2`. The 0.2.x checks are dated in the README under "Checks and distribution".
 
 Observed locally:
 
@@ -51,3 +51,21 @@ Observed on the emulator:
 - Observations: none. SDK `0.3.0-preview.1` sends no observations, and the console reported zero counts for this build.
 
 Not established: a physical device, Android 8 (API 26), TalkBack, or this loop against the hosted console. An emulator run is not a device run.
+
+## SDK 0.4.0-preview.1 — October 10, 2026 (America/New_York)
+
+`sdk-release.json`, `scripts/fetch-sdk.mjs` and `app/build.gradle.kts` now name `assetlib-android-0.4.0-preview.1.aar` from the public `v0.4.0-preview.1` release, with SHA-256 `03d55eaa1975fe86494fb2f65e69e0ad7ad3f5a60d492f02d3c06bf3bdc9a98a` from that release's `SHA256SUMS`. `versionName` is `0.4.0-preview.1` and `versionCode` is 5. The SDK's runtime dependencies (`sdk/build.gradle.kts` at the tag) are unchanged from 0.3.0, so the pinned coroutines, serialization, Bouncy Castle and OkHttp versions stay as they were.
+
+Between the two pins, `0.3.1-preview.1` accepts public configurations with a pinned key set, and `0.4.0-preview.1` adds tintable icons: `AssetRef` gains a last parameter `rendering` that defaults to `AssetRendering.Original`. Kotlin call sites, including the generated `AppAssets.kt`, compile unchanged, but the JVM constructor changed, so everything was built from a clean worktree with no previous build output. The demo has no tintable icon and needed no code change.
+
+Observed locally with JDK 17 (Zulu), Node 24, Android SDK 36 and build-tools 36.1.0, from 00:15 to 00:20 ET:
+
+- `node scripts/fetch-sdk.mjs` downloaded the release AAR into an empty `app/libs/` and printed "Verified Assetlib Android 0.4.0-preview.1."; `shasum -a 256` matches `SHA256SUMS`.
+- `node scripts/generate-assets.mjs ... --check` passed.
+- `./gradlew :app:testDebugUnitTest :app:lint :app:assembleDebug :app:assembleRelease` passed, the CI command; `fetchSdk` verified the AAR again. `CatalogTest`: 3 passed. Lint: 0 errors, 13 warnings, the same kinds as on October 9 (Gradle dependency and plugin version notices, data extraction rules, launcher icon, a KTX suggestion).
+- `./gradlew :app:connectedDebugAndroidTest` on the running API 36.1 emulator (Android 16): `ArtworkAccessibilityTest` passed; `HostedArtworkTest` skipped with no configuration supplied.
+- The same task with `ASSETLIB_PUBLIC_CONFIG_FILE` set to the hosted demo workspace's public configuration (manifest on the legacy host `assetlib-console.vercel.app`): 2 passed, 0 skipped. All three placements resolved signed release 8 as WebP (1200 × 900, 1200 × 900, 600 × 400) and decoded natively, and an independent client with networking disabled restored release 8 from cache. The test is read-only and published nothing; the debug APK contains no hosted configuration asset.
+- The debug APK (`versionCode` 5) was installed fresh and launched; the coast card showed "Bundled". With the same public configuration placed at the app's saved-configuration path (`no_backup/assetlib-public-config.json`, via `run-as`), the relaunched app showed **Connected** with bundled artwork, since a restore reads only the cache. **Check for updates** then showed "Downloaded & verified · r8" with "WebP · 1200 × 900 px" on both travel cards and "WebP · 600 × 400 px" on the garden, and "Connected · release 8". After a force-stop and relaunch the coast card showed "Verified cache · r8".
+- **Disconnect** deleted the saved configuration file, kept the SDK's state directory, and returned the cards to "Bundled". Screenshots were saved to the ignored `build/screenshots/` and are not committed.
+
+Not verified: a console publish and rollback while the app is open, a relaunch with networking off, manual TalkBack, a physical device, and Android 8 (API 26). An emulator run is not a device run.
