@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug builds only. Release builds have no network security config and keep the platform
+  default: system CAs and no cleartext. debug-overrides apply only while android:debuggable is
+  true, so a developer can trust a local test CA (for example the e2e harness's HTTPS front for
+  a local console) by installing it as a user certificate on an emulator. Cleartext stays off.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

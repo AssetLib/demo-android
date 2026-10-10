@@ -33,7 +33,7 @@ CI (`.github/workflows/check.yml`, ubuntu, Java 17) runs the `--check` command, 
 - `MainActivity.kt`: Compose UI, `ArtworkImage` (description follows the pixels actually shown), source labels, connection sheet.
 - `AssetArtworkPainter.kt`: a `BitmapPainter` over the verified bitmap, or the bundled resource when there is none.
 - `app/src/main/res/drawable-nodpi/`: bundled fallbacks `coast_hero.webp`, `ridge_card.png`, `task_garden.png`.
-- `app/src/test/.../CatalogTest.kt`, `app/src/androidTest/.../ArtworkAccessibilityTest.kt`, `HostedArtworkTest.kt`; `app/src/debug/` holds the test-only host activity.
+- `app/src/test/.../CatalogTest.kt`, `app/src/androidTest/.../ArtworkAccessibilityTest.kt`, `HostedArtworkTest.kt`; `app/src/debug/` holds the test-only host activity and a debug-only network security config whose `debug-overrides` trust user-installed CAs, so a debug build can reach a local HTTPS front (the workspace's `e2e/` harness installs its test CA on the emulator). Release builds have no network security config: system CAs only, no cleartext.
 - `sdk-release.json` + `scripts/fetch-sdk.mjs`: the SDK lock and its verifier.
 
 ## Invariants
