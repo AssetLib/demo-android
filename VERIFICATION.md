@@ -1,6 +1,6 @@
 # Verification — October 7, 2026 (America/New_York)
 
-The current default dependency is the public GitHub release `AssetLib/sdk-android@v0.4.0-preview.1`, verified against committed SHA-256 `03d55eaa1975fe86494fb2f65e69e0ad7ad3f5a60d492f02d3c06bf3bdc9a98a`; its checks are in the October 10 section at the end. The October 9 sections cover `v0.3.0-preview.1`. The record below covers the first release, whose default dependency was `AssetLib/sdk-android@v0.1.0-preview.1`, verified against SHA-256 `adb0f4fdc5ceaa69c2092e3987ebc17afc0fb5f34bbf7576eea025147445eba2`. The 0.2.x checks are dated in the README under "Checks and distribution".
+The current default dependency is the public GitHub release `AssetLib/sdk-android@v0.6.0-preview.1`, verified against committed SHA-256 `06cb00e4f7a04c5272eba392f27b01684a29a2069422cea0bbd0d86d6186dc67`; its checks are in the October 11 section at the end. The October 10 section covers `v0.4.0-preview.1` and the October 9 sections cover `v0.3.0-preview.1`. The record below covers the first release, whose default dependency was `AssetLib/sdk-android@v0.1.0-preview.1`, verified against SHA-256 `adb0f4fdc5ceaa69c2092e3987ebc17afc0fb5f34bbf7576eea025147445eba2`. The 0.2.x checks are dated in the README under "Checks and distribution".
 
 Observed locally:
 
@@ -69,3 +69,18 @@ Observed locally with JDK 17 (Zulu), Node 24, Android SDK 36 and build-tools 36.
 - **Disconnect** deleted the saved configuration file, kept the SDK's state directory, and returned the cards to "Bundled". Screenshots were saved to the ignored `build/screenshots/` and are not committed.
 
 Not verified: a console publish and rollback while the app is open, a relaunch with networking off, manual TalkBack, a physical device, and Android 8 (API 26). An emulator run is not a device run.
+
+## SDK 0.6.0-preview.1 — October 11, 2026 (America/New_York)
+
+`sdk-release.json`, `scripts/fetch-sdk.mjs` and `app/build.gradle.kts` now name `assetlib-android-0.6.0-preview.1.aar` from the public `v0.6.0-preview.1` release, with SHA-256 `06cb00e4f7a04c5272eba392f27b01684a29a2069422cea0bbd0d86d6186dc67` from that release's `SHA256SUMS`. `versionName` is `0.6.0-preview.1` and `versionCode` is 6. The demo skips `0.5.0-preview.1`. The SDK's runtime dependencies (`sdk/build.gradle.kts` at the tag) are unchanged from 0.4.0; 0.5.0 added only a test dependency. The pinned coroutines, serialization, Bouncy Castle and OkHttp versions stay as they were.
+
+Between the two pins, `0.5.0-preview.1` adds short looping video (`resolveVideo`), gives `AssetTransport` a three-argument `get` with a default body and gives `HttpsTransport` a second constructor parameter. Those change JVM signatures, so everything was built from a fresh clone with no earlier build output. `0.6.0-preview.1` changes no public signature. It resolves a placement that the current accepted release does not publish to `BUNDLE`, without reading the cache or making a request, so after a restore to a publication that predates a placement, **Check for updates** shows that picture's bundled image. The demo uses no video and needed no code change. Its generated `AppAssets.kt` is unchanged and also passes `--check` with the SDK's `v0.6.0-preview.1` generator.
+
+Observed locally with JDK 17 (Zulu 17.54.21), Node 24.21.0, Android SDK 36 and build-tools 36.1.0, from 19:47 to 19:49 ET, in a fresh clone of `main` at `b061a78` with an empty `app/libs/`:
+
+- `node scripts/fetch-sdk.mjs` downloaded the release AAR (144,031 bytes) and printed "Verified Assetlib Android 0.6.0-preview.1."; `shasum -a 256 -c` against the release's `SHA256SUMS` passed.
+- `node scripts/generate-assets.mjs ... --check` passed.
+- `./gradlew :app:testDebugUnitTest :app:lint :app:assembleDebug :app:assembleRelease` passed, the CI command; `fetchSdk` verified the AAR again. `CatalogTest`: 3 passed. Lint: 0 errors, 13 warnings, the same kinds as on October 10. `aapt2 dump badging` on the unsigned release APK (1,553,172 bytes) shows `versionCode` 6 and `versionName` `0.6.0-preview.1`; the debug APK contains no hosted configuration asset.
+- `./gradlew :app:compileDebugAndroidTestKotlin` compiled `ArtworkAccessibilityTest` and `HostedArtworkTest` against the new AAR. They were not run.
+
+Not verified for this pin: no emulator or device was used. The instrumentation tests, the UI, a console publish and restore while the app is open (including the bundled image for a placement the restored publication lacks), an offline relaunch, manual TalkBack, a physical device and Android 8 (API 26) are not established.

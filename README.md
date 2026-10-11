@@ -4,7 +4,7 @@ A small Jetpack Compose travel app using the native [Assetlib Android SDK](https
 
 [Assetlib console](https://console.assetlib.dev) · [Product site](https://www.assetlib.dev) · [Public web travel demo](https://assetlib-travel.vercel.app)
 
-Android API 26+; the current source targets developer preview **0.4.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
+Android API 26+; the current source targets developer preview **0.6.0-preview.1**. No account is required to explore the bundled app. Hosted administration uses GitHub sign-in. No app-store listing or production support guarantee is claimed.
 
 ## Build from this checkout
 
@@ -15,7 +15,7 @@ Install JDK 17, Android SDK 36 / build-tools 36.1.0, and Node 22+. Set `ANDROID_
 ./gradlew :app:installDebug
 ```
 
-The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.4.0-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
+The default build runs `scripts/fetch-sdk.mjs`. It downloads the exact `v0.6.0-preview.1` GitHub-release AAR from `AssetLib/sdk-android`, validates the committed SHA-256 in `sdk-release.json` before use, and verifies an existing download on every build. There is no sibling checkout requirement or Maven Central dependency for Assetlib. Runtime dependencies are pinned in `app/build.gradle.kts` because a standalone AAR does not package its dependency graph.
 
 For SDK development only:
 
@@ -32,7 +32,7 @@ The local override intentionally bypasses the release AAR. It is not the default
 3. Copy the workspace's public SDK JSON configuration. Paste it into **Public SDK configuration**, then tap **Connect and check release**. This contains an app ID, organization ID, delivery endpoint and verification key; never paste an admin credential.
 4. Return to the app. Each picture reports **Bundled**, **Downloaded & verified**, or **Verified cache**, with the image's release sequence, actual delivered PNG/WebP format, and pixel dimensions when available.
 5. In the console, upload an image of the same aspect ratio, bind it to `travel.coast`, and publish. In the running app, tap **Check for updates**. The illustration changes while the native layout stays the same.
-6. In the console, roll back to the earlier release. A rollback creates a higher sequence. Tap **Check for updates** again to restore the earlier artwork.
+6. In the console, roll back to the earlier release. A rollback creates a higher sequence. Tap **Check for updates** again to restore the earlier artwork. A picture whose placement the restored release does not publish goes back to its bundled image.
 7. Once artwork has downloaded, restart the app without network connectivity. Previously verified artwork can load from this device's cache. Cache eviction or unavailable/incompatible artwork uses the bundled images.
 
 **Disconnect** removes the saved public configuration and returns to the bundled artwork. It retains cached images and monotonic release protection; Android app-data clearing removes those. The delivery server sees normal network request information. Published artwork is public.
@@ -88,4 +88,4 @@ On October 7, 2026, the public AAR also passed against a hosted release containi
 
 On October 8, 2026, the 0.2.1-preview.1 update passed a default build against the public AAR with SHA-256 `60a8ebe267f7aab6ef72e35546c97270008cdd7674dd17cc975f3395c85539c7`, without a sibling SDK override. Both JVM tests, generated-reference checks, lint, and debug/release assembly passed. The API 36.1 emulator Compose accessibility-tree test passed; the optional hosted test skipped because no public configuration was supplied. The checks verified descriptions follow actual displayed pixels, decoration is omitted, fallback does not retain remote labels, and app-owned actions stay available. Manual TalkBack, physical-device acceptance, and a new hosted release check were not performed.
 
-The October 9, 2026 update to 0.3.0-preview.1 and the October 10, 2026 update to 0.4.0-preview.1 are recorded in [VERIFICATION.md](VERIFICATION.md).
+The October 9, 2026 update to 0.3.0-preview.1, the October 10, 2026 update to 0.4.0-preview.1 and the October 11, 2026 update to 0.6.0-preview.1 are recorded in [VERIFICATION.md](VERIFICATION.md).
