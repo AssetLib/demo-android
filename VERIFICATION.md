@@ -83,4 +83,6 @@ Observed locally with JDK 17 (Zulu 17.54.21), Node 24.21.0, Android SDK 36 and b
 - `./gradlew :app:testDebugUnitTest :app:lint :app:assembleDebug :app:assembleRelease` passed, the CI command; `fetchSdk` verified the AAR again. `CatalogTest`: 3 passed. Lint: 0 errors, 13 warnings, the same kinds as on October 10. `aapt2 dump badging` on the unsigned release APK (1,553,172 bytes) shows `versionCode` 6 and `versionName` `0.6.0-preview.1`; the debug APK contains no hosted configuration asset.
 - `./gradlew :app:compileDebugAndroidTestKotlin` compiled `ArtworkAccessibilityTest` and `HostedArtworkTest` against the new AAR. They were not run.
 
+CI ([run 38185708543](https://github.com/AssetLib/demo-android/actions/runs/38185708543), ubuntu, Java 17) passed on `3159dec`, the pin commit: its `fetchSdk` printed "Verified Assetlib Android 0.6.0-preview.1.", and the `--check` command and the Gradle command above passed. It uploaded the debug and unsigned release APKs as `roam-android-preview`.
+
 Not verified for this pin: no emulator or device was used. The instrumentation tests, the UI, a console publish and restore while the app is open (including the bundled image for a placement the restored publication lacks), an offline relaunch, manual TalkBack, a physical device and Android 8 (API 26) are not established.
